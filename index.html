@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 I Have Something to Tell You</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #e8657a;
+    --blush: #f5c2cc;
+    --cream: #fff8f5;
+    --gold: #c9956a;
+    --deep: #8b2e42;
+    --soft: #fde8ec;
+  }
+
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background: var(--cream);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e8657a, #f5c2cc);
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: multiply;
+  }
+
+  /* SCREENS */
+  .screen {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+  .screen.active { display: flex; }
+
+  /* ── SCREEN 1 ── */
+  #screen1 {
+    background: linear-gradient(160deg, #fff0f3 0%, #fce4ec 40%, #fff8f0 100%);
+  }
+
+  .bokeh-bg {
+    position: absolute; inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .bokeh {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: float-bokeh 8s ease-in-out infinite alternate;
+  }
+  .b1 { width: 350px; height: 350px; background: rgba(232,101,122,0.18); top: -80px; left: -100px; animation-delay: 0s; }
+  .b2 { width: 280px; height: 280px; background: rgba(201,149,106,0.15); top: 30%; right: -80px; animation-delay: 2s; }
+  .b3 { width: 200px; height: 200px; background: rgba(245,194,204,0.25); bottom: 10%; left: 10%; animation-delay: 4s; }
+  .b4 { width: 300px; height: 300px; background: rgba(248,187,208,0.2); bottom: -60px; right: 20%; animation-delay: 1s; }
+  @keyframes float-bokeh { from { transform: translate(0,0) scale(1); } to { transform: translate(30px, 20px) scale(1.1); } }
+
+  .petals-container { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .petal {
+    position: absolute;
+    top: -30px;
+    width: 12px; height: 16px;
+    background: radial-gradient(ellipse at 40% 30%, #f9d0d8, #e8657a88);
+    border-radius: 80% 20% 80% 20%;
+    opacity: 0;
+    animation: petal-fall linear infinite;
+  }
+  @keyframes petal-fall {
+    0% { opacity: 0; transform: translateY(-30px) rotate(0deg) translateX(0); }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.5; }
+    100% { opacity: 0; transform: translateY(105vh) rotate(720deg) translateX(80px); }
+  }
+
+  .s1-inner { position: relative; z-index: 2; text-align: center; max-width: 560px; }
+
+  .envelope {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    animation: envelope-pulse 2s ease-in-out infinite;
+    display: block;
+    filter: drop-shadow(0 8px 24px rgba(232,101,122,0.4));
+  }
+  @keyframes envelope-pulse {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.08) rotate(3deg); }
+  }
+
+  .typewriter-wrap {
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    color: var(--deep);
+    font-style: italic;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+  }
+  .cursor-blink {
+    display: inline-block;
+    width: 3px; height: 1em;
+    background: var(--rose);
+    margin-left: 3px;
+    animation: blink 0.9s step-end infinite;
+    vertical-align: text-bottom;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .subtitle {
+    color: var(--gold);
+    font-size: 1.15rem;
+    font-style: italic;
+    margin-top: 0.8rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    animation: fade-up 1s 3.5s forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-main {
+    margin-top: 2.5rem;
+    padding: 0.95rem 2.6rem;
+    background: #f08090;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(139,46,66,0.35);
+    opacity: 0;
+    animation: fade-up 1s 4s forwards;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-main:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 40px rgba(139,46,66,0.45); }
+  .btn-main::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%);
+    border-radius: 50px;
+  }
+
+  /* ── SCREEN 2 ── */
+  #screen2 {
+    background: linear-gradient(170deg, #fff5f7 0%, #ffe8ed 50%, #fff9f0 100%);
+    padding: 4rem 2rem;
+  }
+
+  .s2-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--deep);
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 2;
+  }
+  .s2-title::after {
+    content: '✦ ✦ ✦';
+    display: block;
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin-top: 0.5rem;
+    letter-spacing: 0.4em;
+    font-style: normal;
+  }
+
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+    max-width: 780px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .reason-card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(232,101,122,0.2);
+    border-radius: 20px;
+    padding: 1.6rem 1.4rem;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(232,101,122,0.1);
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.3s ease, box-shadow 0.3s;
+    animation: card-in 0.6s ease forwards;
+  }
+  .reason-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 36px rgba(232,101,122,0.22); }
+  @keyframes card-in {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .reason-icon { font-size: 2.2rem; margin-bottom: 0.7rem; display: block; }
+  .reason-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--deep);
+    font-size: 1rem;
+    font-style: italic;
+    margin-bottom: 0.4rem;
+  }
+  .reason-card p {
+    color: #a06070;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .next-btn {
+    margin-top: 2.5rem;
+    padding: 0.9rem 2.4rem;
+    background: #f08090;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(201,149,106,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; z-index: 2;
+  }
+  .next-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(201,149,106,0.5); }
+
+  /* ── SCREEN 3 ── */
+  #screen3 {
+    background: linear-gradient(150deg, #fce4ec 0%, #fff0f3 40%, #fff8ee 100%);
+  }
+
+  .s3-inner { position: relative; z-index: 2; text-align: center; max-width: 500px; }
+
+  .big-heart {
+    font-size: 5.5rem;
+    display: block;
+    animation: big-heartbeat 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 6px 20px rgba(232,101,122,0.5));
+    margin-bottom: 1rem;
+  }
+  @keyframes big-heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.15); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.08); }
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    color: var(--deep);
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+  }
+  .ask-sub {
+    color: var(--gold);
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-bottom: 2.5rem;
+  }
+
+  .btn-group { display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+  .btn-yes {
+    padding: 1rem 2.8rem;
+    background: #f08090;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(192,57,79,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-yes:hover { transform: scale(1.08); box-shadow: 0 14px 40px rgba(192,57,79,0.5); }
+
+  .btn-maybe {
+    padding: 0.7rem 1.8rem;
+    background: transparent;
+    color: #c8a0a8;
+    border: 1.5px solid #f0b8c0;
+    border-radius: 50px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: left 0.25s ease, top 0.25s ease;
+    position: fixed;
+    display: none;
+  }
+
+  /* ── SUCCESS SCREEN ── */
+  #successScreen {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #fce4ec, #fff8f0, #fce4ec);
+    z-index: 1000;
+    animation: success-in 0.5s ease;
+    text-align: center;
+    padding: 2rem;
+  }
+  @keyframes success-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  #successScreen.show { display: flex; }
+
+  .success-hearts { font-size: 4rem; margin-bottom: 1rem; animation: bounce-hearts 1s ease-in-out infinite alternate; }
+  @keyframes bounce-hearts { from { transform: translateY(0) scale(1); } to { transform: translateY(-12px) scale(1.05); } }
+
+  .success-msg {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: var(--deep);
+    font-style: italic;
+    line-height: 1.2;
+  }
+  .success-sub {
+    color: var(--gold);
+    font-size: 1.25rem;
+    font-style: italic;
+    margin-top: 0.8rem;
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    animation: confetti-fall 2s ease-in forwards;
+  }
+  @keyframes confetti-fall {
+    0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
+  }
+
+  /* Floating hearts */
+  .float-heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9997;
+    font-size: 1.6rem;
+    animation: heart-float 3s ease-in forwards;
+  }
+  @keyframes heart-float {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80vh) scale(0.5); }
+  }
+
+  /* Divider */
+  .gold-divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 1.2rem auto;
+  }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+
+<!-- ═══════════ SCREEN 1 ═══════════ -->
+<div class="screen active" id="screen1">
+  <div class="bokeh-bg">
+    <div class="bokeh b1"></div>
+    <div class="bokeh b2"></div>
+    <div class="bokeh b3"></div>
+    <div class="bokeh b4"></div>
+  </div>
+  <div class="petals-container" id="petalsContainer"></div>
+  <div class="s1-inner">
+    <span class="envelope">💌</span>
+    <div class="typewriter-wrap">
+      <h1 id="typewriterText"><span class="cursor-blink"></span></h1>
+    </div>
+    <div class="gold-divider"></div>
+    <p class="subtitle">... a message just for you</p>
+    <button class="btn-main" id="btn1" onclick="goToScreen2()">Open My Heart 🌹</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 2 ═══════════ -->
+<div class="screen" id="screen2">
+  <div class="bokeh-bg">
+    <div class="bokeh b1"></div>
+    <div class="bokeh b3"></div>
+  </div>
+  <div class="s2-title">Here's why you're so special to me...</div>
+  <div class="reasons-grid" id="reasonsGrid">
+    <!-- cards injected by JS -->
+  </div>
+  <button class="next-btn" onclick="goToScreen3()" style="opacity:0;animation:fade-up 1s 1.8s forwards;">
+    There's more... 💛
+  </button>
+</div>
+
+<!-- ═══════════ SCREEN 3 ═══════════ -->
+<div class="screen" id="screen3">
+  <div class="bokeh-bg">
+    <div class="bokeh b1"></div>
+    <div class="bokeh b2"></div>
+    <div class="bokeh b4"></div>
+  </div>
+  <div class="petals-container" id="petalsContainer3"></div>
+  <div class="s3-inner">
+    <span class="big-heart">💖</span>
+    <h2>Will you be my girlfriend?</h2>
+    <p class="ask-sub">My heart has been waiting to ask you this...</p>
+    <div class="gold-divider"></div>
+    <div class="btn-group">
+      <button class="btn-yes" onclick="sayYes()">Yes, of course! 🎉</button>
+      <button class="btn-maybe" id="btnMaybe">Maybe... 🙈</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SUCCESS ═══════════ -->
+<div id="successScreen">
+  <span class="success-hearts">💗💖💗</span>
+  <div class="success-msg">She said YES! 🥂</div>
+  <div class="gold-divider"></div>
+  <p class="success-sub">You've just made me the happiest person alive.</p>
+  <p style="color:#c8a0a8; margin-top:1rem; font-size:1rem; font-style:italic;">This is the beginning of something beautiful 🌹</p>
+  <p style="color:#e8657a; margin-top:1.5rem; font-size:1.1rem; font-style:italic; font-family:'Playfair Display',serif;">📸 Send a screenshot of your answer to me</p>
+</div>
+
+<script>
+// ── Cursor ──
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// ── Petals ──
+function spawnPetals(containerId) {
+  const container = document.getElementById(containerId);
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
+    p.style.opacity = 0.5 + Math.random() * 0.5;
+    container.appendChild(p);
+  }
+}
+spawnPetals('petalsContainer');
+
+// ── Typewriter ──
+const text = "Hii, my Nimiiii, I've got something important to tell you 💌";
+let i = 0;
+const el = document.getElementById('typewriterText');
+function type() {
+  if (i < text.length) {
+    el.innerHTML = text.slice(0, ++i) + '<span class="cursor-blink"></span>';
+    setTimeout(type, 60);
+  } else {
+    el.innerHTML = text;
+  }
+}
+setTimeout(type, 600);
+
+// ── Reasons ──
+const reasons = [
+  { icon: '😂', title: 'You make me laugh', desc: 'Every conversation with you lights up my whole day.' },
+  { icon: '🌟', title: 'You feel safe', desc: 'I never have to feel scared expressing myself emotionally around you.' },
+  { icon: '🤝', title: 'You just get me', desc: 'I never have to explain myself — you already understand.' },
+  { icon: '🌸', title: 'Your kindness', desc: "The way you care for others tells me everything about your heart." },
+  { icon: '✨', title: "You're unforgettable", desc: "I can't stop thinking about the little things you do." },
+  { icon: '🫶', title: 'Being near you feels like home', desc: "Comfortable, warm, and the safest place I know." },
+];
+
+function buildReasons() {
+  const grid = document.getElementById('reasonsGrid');
+  grid.innerHTML = '';
+  reasons.forEach((r, idx) => {
+    const card = document.createElement('div');
+    card.className = 'reason-card';
+    card.style.animationDelay = (0.2 + idx * 0.15) + 's';
+    card.innerHTML = `<span class="reason-icon">${r.icon}</span><h3>${r.title}</h3><p>${r.desc}</p>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── Screen transitions ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
+  document.getElementById('btnMaybe').style.display = 'none';
+  const s = document.getElementById(id);
+  s.style.display = 'flex';
+  s.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goToScreen2() {
+  showScreen('screen2');
+  buildReasons();
+}
+function goToScreen3() {
+  showScreen('screen3');
+  spawnPetals('petalsContainer3');
+  setupMaybeButton();
+}
+
+// ── Maybe button runaway ──
+let maybeSetup = false;
+function setupMaybeButton() {
+  const btn = document.getElementById('btnMaybe');
+  btn.style.display = 'block';
+  // Center it near the yes button initially
+  btn.style.left = (window.innerWidth / 2 + 80) + 'px';
+  btn.style.top = (window.innerHeight / 2 + 20) + 'px';
+  if (!maybeSetup) {
+    btn.addEventListener('mouseover', runAway);
+    btn.addEventListener('touchstart', runAway);
+    maybeSetup = true;
+  }
+}
+
+function runAway() {
+  const btn = document.getElementById('btnMaybe');
+  const maxX = window.innerWidth - 120;
+  const maxY = window.innerHeight - 60;
+  const x = 60 + Math.random() * (maxX - 120);
+  const y = 30 + Math.random() * (maxY - 80);
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+}
+
+// ── Confetti ──
+function fireConfetti() {
+  const colors = ['#e8657a','#f5c2cc','#c9956a','#ffd6de','#a0c4ff','#ffd700'];
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.top = '-10px';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.width = (6 + Math.random() * 10) + 'px';
+    c.style.height = (6 + Math.random() * 10) + 'px';
+    c.style.animationDelay = Math.random() * 0.8 + 's';
+    c.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+  // Floating hearts
+  const heartEmojis = ['💖','💗','💕','🌹','💓','💞','✨'];
+  for (let i = 0; i < 20; i++) {
+    const h = document.createElement('div');
+    h.className = 'float-heart';
+    h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    h.style.left = (10 + Math.random() * 80) + 'vw';
+    h.style.bottom = '-30px';
+    h.style.animationDelay = Math.random() * 1.5 + 's';
+    h.style.animationDuration = (2 + Math.random() * 2) + 's';
+    h.style.fontSize = (1 + Math.random() * 2) + 'rem';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 5000);
+  }
+}
+
+function sayYes() {
+  fireConfetti();
+  setTimeout(() => {
+    document.getElementById('successScreen').classList.add('show');
+  }, 500);
+  // Keep firing confetti
+  for (let i = 1; i <= 4; i++) {
+    setTimeout(fireConfetti, i * 800);
+  }
+}
+</script>
+</body>
+</html>
